@@ -35,7 +35,10 @@
                         </div>
                     </div>
                     <div class="col-xs-4">
-                        <b>Record</b> 7-3
+                        {{#record}}
+                            <b>Overall</b> {{overall.wins}}-{{overall.losses}}
+                            <b>Division</b> {{division.wins}}-{{division.losses}}
+                        {{/record}}
                     </div>
                 </div>
                 <div class="row team-players" id="MyTeamPlayers">
@@ -48,13 +51,17 @@
                                          onerror="this.src='http://g.espncdn.com/s/ffllm/14//images/playerpop/design2/no-mugshot-7.png'">
                                 </div>
                                 <div class="row-content">
-                                    <div class="list-group-item-heading">{{firstName}} {{lastName}} </div>
+                                    <div class="list-group-item-heading"><b>{{slot}}</b> - {{firstName}} {{lastName}} </div>
                                     <p class="list-group-item-text">
-                                        Stats
+                                        <span class="row">
+                                            <span class="col-md-6">Text 1</span>
+                                            <span class="col-md-6">Text 1</span>
+                                        </span>
                                     </p>
                                 </div>
                             </div>
                         {{/each}}
+
 
                         <H3>Bench</H3>
                         {{#each roster.bench}}
