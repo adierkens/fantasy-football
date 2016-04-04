@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "name": "Fantasy Football",
+  "description": "A better way to fantasy football",
+  "version": "0.0.1",
+  "content_scripts": [
+    {
+      "matches": [
+        "http://games.espn.go.com/*",
+        "https://games.espn.go.com/*"
+      ],
+      "js": [
+        "dist/loader.js"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    "dist/*"
+  ],
+  "permissions": [
+    "activeTab"
+  ]
+}

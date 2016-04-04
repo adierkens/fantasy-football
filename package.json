@@ -1,0 +1,31 @@
+{
+  "name": "fantasy-football",
+  "version": "0.0.1",
+  "description": "A better way to fantasy football",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "mocha tests/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adierkens/fantasy-football.git"
+  },
+  "keywords": [
+    "fantasy",
+    "football"
+  ],
+  "author": "Adam Dierkens <adam@dierkens.com> (adamdierkens.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adierkens/fantasy-football/issues"
+  },
+  "homepage": "https://github.com/adierkens/fantasy-football#readme",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^5.0.0",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-concat": "^1.0.0",
+    "grunt-contrib-copy": "^0.8.2",
+    "grunt-contrib-watch": "^0.6.1"
+  }
+}
