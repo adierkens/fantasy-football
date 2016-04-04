@@ -18,7 +18,62 @@
                 League
             </div>
             <div class="well page active" id="MyTeam">
-                MyTeam
+                <div class="row team-header">
+                    <div class="col-xs-4">
+                        <img class="team-image" src="{{teamImage}}">
+                    </div>
+                    <div class="col-xs-4">
+                        <H1 class="team-name"><b>{{teamName}}</b></H1>
+                        <div class="row">
+                            <b>Acquisitions:</b> {{acqusitions}}
+                        </div>
+                        <div class="row">
+                            <b>Trades:</b> {{trades}}
+                        </div>
+                        <div class="row">
+                            <b>Waiver Order:</b> {{waiver.order}} of {{waiver.total}}
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <b>Record</b> 7-3
+                    </div>
+                </div>
+                <div class="row team-players" id="MyTeamPlayers">
+                    <H3>Roster</H3>
+                    <div class="list-group">
+                        {{#each roster.players}}
+                            <div class="list-group-item player-row">
+                                <div class="row-action-primary">
+                                    <img class="player-image" src="http://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/{{playerID}}.png&w=200&h=145"
+                                         onerror="this.src='http://g.espncdn.com/s/ffllm/14//images/playerpop/design2/no-mugshot-7.png'">
+                                </div>
+                                <div class="row-content">
+                                    <div class="list-group-item-heading">{{firstName}} {{lastName}} </div>
+                                    <p class="list-group-item-text">
+                                        Stats
+                                    </p>
+                                </div>
+                            </div>
+                        {{/each}}
+
+                        <H3>Bench</H3>
+                        {{#each roster.bench}}
+                            <div class="list-group-item player-row">
+                                <div class="row-action-primary">
+                                    <img class="player-image" src="http://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/{{playerID}}.png&w=200&h=145"
+                                         onerror="this.src='http://g.espncdn.com/s/ffllm/14//images/playerpop/design2/no-mugshot-7.png'">
+                                </div>
+                                <div class="row-content">
+                                    <div class="list-group-item-heading">{{firstName}} {{lastName}} </div>
+                                    <p class="list-group-item-text">
+                                        Stats
+                                    </p>
+                                </div>
+                            </div>
+                        {{/each}}
+
+                    </div>
+                </div>
             </div>
             <div class="well page" id="Players" style="display: none;">
                 Players
@@ -35,4 +90,3 @@
         </div>
     </div>
 </div>
-<!-- Modals -->

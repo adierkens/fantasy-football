@@ -13,7 +13,8 @@ const LOCATIONS = {
         'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css',
         'http://fezvrasta.github.io/bootstrap-material-design/dist/css/bootstrap-material-design.css',
         'http://fezvrasta.github.io/bootstrap-material-design/dist/css/ripples.min.css',
-        'http://fezvrasta.github.io/bootstrap-material-design/index.css'
+        'http://fezvrasta.github.io/bootstrap-material-design/index.css',
+        chrome.extension.getURL('/dist/styles.css')
     ],
     templates: [
         'wrapper'
@@ -40,10 +41,8 @@ for (var i in LOCATIONS.templates) {
     var template = LOCATIONS.templates[i];
     var client = new XMLHttpRequest();
     client.onreadystatechange = function() {
-        console.log('ReadyState: ' + client.readyState + ' status ' + client.status);
         if (client.readyState === 4 && client.status === 200) {
             var templateContent = client.responseText;
-            console.log(templateContent);
             var scriptEle = document.createElement('script');
             scriptEle.type = 'text/x-handlebars-template';
             scriptEle.id = template;
@@ -51,8 +50,6 @@ for (var i in LOCATIONS.templates) {
 
             document.head.appendChild(scriptEle);
 
-        } else {
-            console.log(client.responseText);
         }
     };
     client.open('GET', chrome.extension.getURL('/dist/' + template + '.hbs'));

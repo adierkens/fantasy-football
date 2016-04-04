@@ -50,13 +50,22 @@ module.exports = function(grunt) {
       }
     },
 
+    less: {
+      dist: {
+        files: {
+          './dist/styles.css': './src/styles/style.less'
+        }
+      }
+    }
+
   });
 
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-less');
 
-  grunt.registerTask('build', ['clean', 'concat', 'copy']);
+  grunt.registerTask('build', ['clean', 'concat', 'copy', 'less']);
   grunt.registerTask('default', ['build']);
 };
