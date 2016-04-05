@@ -22,25 +22,6 @@ var getUrlParameter = function getUrlParameter(sParam) {
 
 var savedData = {};
 
-const slotMapping = {
-    0: 'QB',
-    1: 'RB',
-    2: 'RB',
-    3: 'WR',
-    4: 'WR',
-    5: 'TE',
-    6: 'FLEX',
-    7: 'D/ST',
-    8: 'K',
-    9: 'Bench',
-    10: 'Bench',
-    11: 'Bench',
-    12: 'Bench',
-    13: 'Bench',
-    14: 'Bench',
-    15: 'Bench'
-};
-
 
 
 function init() {
@@ -69,7 +50,15 @@ function init() {
         var page = $(window.hash);
         $(window.hash).addClass('active');
     });
+
+    $('.projection').readmore();
 }
+
+const regexes = {
+    acqusitions: /Acquisitions: (\d+)/,
+    trades: /Trades: (\d+)/,
+    waiver: /(\d+) of (\d+)/
+};
 
 function saveData() {
     savedData.teamImg = $('.games-univ-mod1 img')[0].src;
@@ -81,10 +70,21 @@ function saveData() {
 
         if (count == 0) {
             // Acqusitions
-
+            var match = text.match(regexes.acqusitions)[1];
+            match = parseInt(match, 10);
+            savedData.acqusitions = match;
+        } else if (count === 1) {
             // Trades
-
+            var match = text.match(regexes.trades)[1];
+            match = parseInt(match, 10);
+            savedData.trades = match;
+        } else if (count === 2) {
             // Waiver Order
+            var match = text.match(regexes.waiver);
+            savedData.waiver = {
+                order: parseInt(match[1], 10),
+                total: parseInt(match[2], 10)
+            };
         }
 
         count += 1;
@@ -98,7 +98,6 @@ function populatePlayers(callback) {
         bench: []
     };
 
-
     $.get('http://games.espn.go.com/ffl/api/v2/rosterInfo?leagueId=' + leagueId + '&includeProjectionText=true&teamIds=' + getUrlParameter('teamId') + '&usePreviousSeasonRealStats=false&useCurrentSeasonRealStats=true&useCurrentPeriodRealStats=true&useCurrentPeriodProjectedStats=true&usePreviousPeriodRealStats=true&includeRankings=true&includeLatestNews=true',
         function (data) {
             var players = data.leagueRosters.teams[0].slots;
@@ -106,6 +105,11 @@ function populatePlayers(callback) {
             for (var i = 0; i < players.length; i++) {
                 var p = players[i].player;
                 var slot = i;
+
+                if (!proTeamIdMap[p.proTeamId] || proTeamIdMap[p.proTeamId] == '') {
+                    console.log(p.lastName + ' ' + p.proTeamId);
+                }
+
                 var player = {
                     firstName: p.firstName,
                     lastName: p.lastName,
@@ -114,6 +118,7 @@ function populatePlayers(callback) {
                     playerID: p.playerId,
                     positionRank: p.positionRank,
                     slot: slotMapping[slot],
+                    proTeam: proTeamIdMap[p.proTeamId],
                     proTeamID: p.proTeamId,
                     projections: {
                         season: {
@@ -121,6 +126,20 @@ function populatePlayers(callback) {
                         }
                     }
                 };
+
+                if (player.slot === 'FLEX' || player.slot === 'Bench') {
+                    for (var index=0; index< p.eligibleSlotCategoryIds.length; index++) {
+                        var eligibleSlotCategoryId = p.eligibleSlotCategoryIds[index];
+                        if (eligibleSlotCategoryId < 9 && eligibleSlotCategoryId !== 6) {
+                            player.position = slotMapping[eligibleSlotCategoryId];
+                            break;
+                        }
+                      }
+                } else {
+                    player.position = player.slot;
+                }
+
+
 
                 if (p.projections) {
                     if (p.projections.length > 0) {
@@ -151,13 +170,11 @@ window.onload = function() {
         document.body.innerHTML = loadTemplate('wrapper', {
             teamImage: savedData.teamImg,
             teamName: savedData.teamName,
+            leagueId: leagueId,
             roster: roster,
-            waiver: {
-                order: 7,
-                total: 10
-            },
-            trades: 8,
-            acqusitions: 8,
+            waiver: savedData.waiver,
+            trades: savedData.trades,
+            acqusitions: savedData.acqusitions,
             record: {
                 overall: {
                     wins: 7,

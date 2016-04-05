@@ -3,11 +3,11 @@
 const LOCATIONS = {
     js: [
         chrome.extension.getURL('/dist/handlebars-latest.js'),
-        chrome.extension.getURL('/dist/fantasy-football.combined.js'),
         'https://code.jquery.com/jquery-2.1.4.min.js',
         'https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.1.3/mustache.min.js',
         'http://fezvrasta.github.io/bootstrap-material-design/dist/js/material.js',
-        'http://fezvrasta.github.io/bootstrap-material-design/dist/js/ripples.min.js'
+        'http://fezvrasta.github.io/bootstrap-material-design/dist/js/ripples.min.js',
+        chrome.extension.getURL('/dist/fantasy-football.combined.js')
     ],
     css: [
         'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css',
@@ -20,7 +20,6 @@ const LOCATIONS = {
         'wrapper'
     ]
 };
-
 
 for (var i in LOCATIONS.js) {
     var script = LOCATIONS.js[i];

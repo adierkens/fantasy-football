@@ -10,6 +10,7 @@
             <li class="withripple" data-target="#Standings">Standings</li>
             <li class="withripple" data-target="#Scoreboard">Scoreboard</li>
             <li class="withripple" data-target="#Teams">Teams</li>
+            <li class="withripple" data-target="#Graphs">Graphs</li>
         </ul>
     </div>
     <div class="pages col-xs-9">
@@ -31,7 +32,7 @@
                             <b>Trades:</b> {{trades}}
                         </div>
                         <div class="row">
-                            <b>Waiver Order:</b> {{waiver.order}} of {{waiver.total}}
+                            <a href="/ffl/tools/waiverorder?leagueId={{leagueId}}"> <b>Waiver Order:</b> {{waiver.order}} of {{waiver.total}} </a>
                         </div>
                     </div>
                     <div class="col-xs-4">
@@ -51,12 +52,15 @@
                                          onerror="this.src='http://g.espncdn.com/s/ffllm/14//images/playerpop/design2/no-mugshot-7.png'">
                                 </div>
                                 <div class="row-content">
-                                    <div class="list-group-item-heading"><b>{{slot}}</b> - {{firstName}} {{lastName}} </div>
+                                    <div class="list-group-item-heading"><b>{{slot}}</b> - {{firstName}} {{lastName}} <span class="list-group-item-subheading"> - ({{position}}) - {{proTeam}} </span> </div>
                                     <p class="list-group-item-text">
-                                        <span class="row">
-                                            <span class="col-md-6">Text 1</span>
-                                            <span class="col-md-6">Text 1</span>
-                                        </span>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="projection">
+                                                    {{projections.season.evaluation}}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </p>
                                 </div>
                             </div>
@@ -71,7 +75,7 @@
                                          onerror="this.src='http://g.espncdn.com/s/ffllm/14//images/playerpop/design2/no-mugshot-7.png'">
                                 </div>
                                 <div class="row-content">
-                                    <div class="list-group-item-heading">{{firstName}} {{lastName}} </div>
+                                    <div class="list-group-item-heading"><b>{{slot}}</b> - {{firstName}} {{lastName}} - ({{position}}) - {{proTeam}}</div>
                                     <p class="list-group-item-text">
                                         Stats
                                     </p>
@@ -93,6 +97,9 @@
             </div>
             <div class="well page" id="Teams" style="display: none;">
                 Teams
+            </div>
+            <div class="well page" id="Graphs" style="display: none;">
+                
             </div>
         </div>
     </div>
