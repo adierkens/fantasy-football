@@ -8,6 +8,7 @@ const LOCATIONS = {
         'http://fezvrasta.github.io/bootstrap-material-design/dist/js/material.js',
         'http://fezvrasta.github.io/bootstrap-material-design/dist/js/ripples.min.js',
         'https://www.gstatic.com/charts/loader.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js',
         chrome.extension.getURL('/dist/fantasy-football.combined.js')
     ],
     css: [

@@ -24,7 +24,6 @@ var savedData = {};
 
 
 function init() {
-
     window.hash = window.hash || '#MyTeam';
 
     if (window.hash != "#MyTeam") {
@@ -49,9 +48,12 @@ function init() {
         $(window.hash).show();
         var page = $(window.hash);
         $(window.hash).addClass('active');
-    });
 
-    $('.projection').readmore();
+        if (window.hash == '#Graphs') {
+            initGraph();
+        }
+
+    });
 }
 
 const regexes = {
@@ -63,8 +65,6 @@ const regexes = {
 function saveData() {
     savedData.teamImg = $('.games-univ-mod1 img')[0].src;
     savedData.teamName = $('.team-name').html().split('<')[0].trim();
-
-
 
     var count = 0;
     $('.games-btm-area li').each(function() {
