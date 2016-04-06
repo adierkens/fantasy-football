@@ -1,5 +1,7 @@
 <div class="header-panel shadow-z-2">
 </div>
+<iframe id="ifr" src="">
+</iframe>
 <div class="container-fluid main">
     <div class="row col-xs-3 menu">
         <ul>
@@ -137,10 +139,41 @@
                 {{{header}}}
             </div>
             <div class="well page" id="Graphs" style="display: none;">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.min.js"></script>
                 {{header}}
                 <div class="row">
-                    <div class="col-sm-12">
-                        <canvas id="testChart" width="700" height="900"></canvas>
+                    <div class="col-xs-1"></div>
+                    <div class="col-xs-10">
+                        <ul class="nav nav-pills" id="player-type-selection">
+                            <li class="graph-position active"><a href="javascript:void(0)">QB</a></li>
+                            <li class="graph-position"><a href="javascript:void(0)">RB</a></li>
+                            <li class="graph-position"><a href="javascript:void(0)">WR</a></li>
+                            <li class="graph-position"><a href="javascript:void(0)">TE</a></li>
+                            <li class="graph-position"><a href="javascript:void(0)">K</a></li>
+                        </ul>
+
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <select id="player-type-team-select" class="form-control chart-select">
+                                        <option></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <select id="player-type-player-select" class="form-control chart-select">
+                                        <option></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <canvas id="testChart"></canvas>
                     </div>
                 </div>
             </div>

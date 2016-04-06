@@ -42,42 +42,59 @@ const statsPerPosition = {
 };
 
 var graphData = {
+    data: {
+        labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7", "Week 8", "Week 9", "Week 10", "Week 11", "Week 12", "Week 13", "Week 14", "Week 15"],
+        datasets: [
+            {
+                label: "My First dataset",
+                fillColor: "rgba(220,220,220,0.2)",
+                strokeColor: "rgba(220,220,220,1)",
+                pointColor: "rgba(220,220,220,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(220,220,220,1)",
+                data: [0]
+            }
+        ]
+    }
 };
 
 function initGraph() {
 
-    var data = {
-        labels: ["January", "February", "March", "April", "May", "June", "July"],
-        datasets: [
-            {
-                label: "My First dataset",
-                fillColor: "rgba(220,220,220,0.5)",
-                strokeColor: "rgba(220,220,220,0.8)",
-                highlightFill: "rgba(220,220,220,0.75)",
-                highlightStroke: "rgba(220,220,220,1)",
-                data: [65, 59, 80, 81, 56, 55, 40]
-            },
-            {
-                label: "My Second dataset",
-                fillColor: "rgba(151,187,205,0.5)",
-                strokeColor: "rgba(151,187,205,0.8)",
-                highlightFill: "rgba(151,187,205,0.75)",
-                highlightStroke: "rgba(151,187,205,1)",
-                data: [28, 48, 40, 19, 86, 27, 90]
-            }
-        ]
-    };
+    $('#player-type-selection').children().children().on('click', function() {
+        $(this).parent().parent().children().removeClass('active');
+        $(this).parent().addClass('active');
+        positionSelectionChanged($(this).text());
+    });
 
-    
+    $('#ifr').ready(function(){
+        console.log(this);
+    });
 
-    var myBarChart = new Chart(document.getElementById("testChart").getContext("2d")).Bar(data, {});
+    $('#player-type-team-select').select2({
+        disabled: true,
+        placeholder: 'Select Player'
+    });
 
+    $('#player-type-player-select').select2({
+        disabled: true,
+        placeholder: 'Select Player'
+    });
+
+
+    var ctx = document.getElementById("testChart").getContext("2d");
+    graphData.chart = new Chart(ctx).Line(graphData.data, {
+        responsive: true
+    });
 }
 
-function createEmptyGraph() {
+function positionSelectionChanged(newPosition) {
+    console.log(newPosition);
+}
 
 
-
+function redrawGraph() {
+    graphData.chart.update();
 }
 
 
@@ -126,6 +143,7 @@ function getStatsData(filter, callback) {
 function addDataToGraph(graphObj) {
 
     getStatsData(graphObj.filter, function(weeklyStats) {
+
 
     });
 
