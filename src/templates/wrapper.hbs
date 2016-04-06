@@ -16,35 +16,32 @@
     <div class="pages col-xs-9">
         <div class="row">
             <div class="well page" id="League" style="display: none;">
+                {{{header}}}
                 League
             </div>
             <div class="well page active" id="MyTeam">
-                <div class="row team-header">
-                    <div class="col-xs-4">
-                        <img class="team-image" src="{{teamImage}}">
-                    </div>
-                    <div class="col-xs-4">
-                        <H1 class="team-name"><b>{{teamName}}</b></H1>
-                        <div class="row">
-                            <b>Acquisitions:</b> {{acqusitions}}
-                        </div>
-                        <div class="row">
-                            <b>Trades:</b> {{trades}}
-                        </div>
-                        <div class="row">
-                            <a href="/ffl/tools/waiverorder?leagueId={{leagueId}}"> <b>Waiver Order:</b> {{waiver.order}} of {{waiver.total}} </a>
-                        </div>
-                    </div>
-                    <div class="col-xs-4">
-                        {{#record}}
-                            <b>Overall</b> {{overall.wins}}-{{overall.losses}}
-                            <b>Division</b> {{division.wins}}-{{division.losses}}
-                        {{/record}}
-                    </div>
-                </div>
+                {{{header}}}
                 <div class="row team-players" id="MyTeamPlayers">
-                    <H3>Roster</H3>
                     <div class="list-group">
+                        <div class="list-group-item player-row">
+                            <div class="row-action-primary">
+                                <div class="player-image"></div>
+                            </div>
+                            <div class="row-content">
+                                <div class="list-group-item-heading"><b>Roster</b></div>
+                                <p class="list-group-item-text">
+                                    <div class="row">
+                                        <div class="col-xs-5"></div>
+                                        <div class="col-xs-1"><b>Last Game</b></div>
+                                        <div class="col-xs-1"><b>3 Game Avg</b></div>
+                                        <div class="col-xs-1"><b>% Owned</b></div>
+                                        <div class="col-xs-1"><b>% Started</b></div>
+                                        <div class="col-xs-1"><b>% Change</b></div>
+                                    </div>
+                                </p>
+                            </div>
+                        </div>
+
                         {{#each roster.players}}
                             <div class="list-group-item player-row">
                                 <div class="row-action-primary">
@@ -55,19 +52,50 @@
                                     <div class="list-group-item-heading"><b>{{slot}}</b> - {{firstName}} {{lastName}} <span class="list-group-item-subheading"> - ({{position}}) - {{proTeam}} </span> </div>
                                     <p class="list-group-item-text">
                                         <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="projection">
-                                                    {{projections.season.evaluation}}
-                                                </div>
-                                            </div>
+                                            <div class="col-xs-5"></div>
+                                            <div class="col-xs-1">{{lastGamePoints}}</div>
+                                            <div class="col-xs-1">{{last3GameAvg}}</div>
+                                            <div class="col-xs-1">{{percentOwned}} % </div>
+                                            <div class="col-xs-1">{{percentStarted}} %</div>
+                                            <div class="col-xs-1">{{percentChange}} %</div>
                                         </div>
                                     </p>
                                 </div>
                             </div>
                         {{/each}}
 
+                        <div class="list-group-item player-row">
+                            <div class="row-action-primary">
+                                <div class="player-image"></div>
+                            </div>
+                            <div class="row-content">
+                                <div class="list-group-item-heading"></div>
+                                <p class="list-group-item-text">
+                                <div class="row">
+                                </div>
+                                </p>
+                            </div>
+                        </div>
 
-                        <H3>Bench</H3>
+                        <div class="list-group-item player-row">
+                            <div class="row-action-primary">
+                                <div class="player-image"></div>
+                            </div>
+                            <div class="row-content">
+                                <div class="list-group-item-heading"><b>Bench</b></div>
+                                <p class="list-group-item-text">
+                                    <div class="row">
+                                        <div class="col-xs-5"></div>
+                                        <div class="col-xs-1"><b>Last Game</b></div>
+                                        <div class="col-xs-1"><b>3 Game Avg</b></div>
+                                        <div class="col-xs-1"><b>% Owned</b></div>
+                                        <div class="col-xs-1"><b>% Started</b></div>
+                                        <div class="col-xs-1"><b>% Change</b></div>
+                                    </div>
+                                </p>
+                            </div>
+                        </div>
+
                         {{#each roster.bench}}
                             <div class="list-group-item player-row">
                                 <div class="row-action-primary">
@@ -75,9 +103,16 @@
                                          onerror="this.src='http://g.espncdn.com/s/ffllm/14//images/playerpop/design2/no-mugshot-7.png'">
                                 </div>
                                 <div class="row-content">
-                                    <div class="list-group-item-heading"><b>{{slot}}</b> - {{firstName}} {{lastName}} - ({{position}}) - {{proTeam}}</div>
+                                    <div class="list-group-item-heading"><b>{{position}}</b> - {{firstName}} {{lastName}} <span class="list-group-item-subheading"> - {{proTeam}} </span> </div>
                                     <p class="list-group-item-text">
-                                        Stats
+                                    <div class="row">
+                                        <div class="col-xs-5"></div>
+                                        <div class="col-xs-1">{{lastGamePoints}}</div>
+                                        <div class="col-xs-1">{{last3GameAvg}}</div>
+                                        <div class="col-xs-1">{{percentOwned}} % </div>
+                                        <div class="col-xs-1">{{percentStarted}} %</div>
+                                        <div class="col-xs-1">{{percentChange}} %</div>
+                                    </div>
                                     </p>
                                 </div>
                             </div>
@@ -87,19 +122,39 @@
                 </div>
             </div>
             <div class="well page" id="Players" style="display: none;">
-                Players
+                {{{header}}}
+
             </div>
             <div class="well page" id="Standings" style="display: none;">
-                Standings
+                {{{header}}}
+
             </div>
             <div class="well page" id="Scoreboard" style="display: none;">
-                Scoreboard
+                {{{header}}}
+
             </div>
             <div class="well page" id="Teams" style="display: none;">
-                Teams
+                {{{header}}}
+
             </div>
             <div class="well page" id="Graphs" style="display: none;">
-                
+                {{{header}}}
+
+                <div class="row">
+                    <div class="col-sm-10">
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <div id="PlayerChart"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <button class="btn btn-primary">Save</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

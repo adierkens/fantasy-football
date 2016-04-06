@@ -7,6 +7,7 @@ const LOCATIONS = {
         'https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.1.3/mustache.min.js',
         'http://fezvrasta.github.io/bootstrap-material-design/dist/js/material.js',
         'http://fezvrasta.github.io/bootstrap-material-design/dist/js/ripples.min.js',
+        'https://www.gstatic.com/charts/loader.js',
         chrome.extension.getURL('/dist/fantasy-football.combined.js')
     ],
     css: [
@@ -17,7 +18,8 @@ const LOCATIONS = {
         chrome.extension.getURL('/dist/styles.css')
     ],
     templates: [
-        'wrapper'
+        'wrapper',
+        'header'
     ]
 };
 
@@ -39,12 +41,13 @@ for (var i in LOCATIONS.css) {
 for (var i in LOCATIONS.templates) {
     var template = LOCATIONS.templates[i];
     var client = new XMLHttpRequest();
+    client.template = template;
     client.onreadystatechange = function() {
-        if (client.readyState === 4 && client.status === 200) {
-            var templateContent = client.responseText;
+        if (this.readyState === 4 && this.status === 200) {
+            var templateContent = this.responseText;
             var scriptEle = document.createElement('script');
             scriptEle.type = 'text/x-handlebars-template';
-            scriptEle.id = template;
+            scriptEle.id = this.template;
             scriptEle.innerHTML = templateContent;
 
             document.head.appendChild(scriptEle);

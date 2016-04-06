@@ -19,8 +19,7 @@ const slotMapping = {
 };
 
 const proTeamIdMap = {
-  0: '',
-  1: '',
+  1: 'ATl',
   2: 'BUF',
   3: 'CHI',
   4: 'CIN',
@@ -30,7 +29,7 @@ const proTeamIdMap = {
   8: 'DET',
   9: 'GB',
   10: 'TEN',
-  11: '',
+  11: 'IND',
   12: 'KC',
   13: 'OAK',
   14: 'STL',
@@ -50,10 +49,9 @@ const proTeamIdMap = {
   28: 'WAS',
   29: 'CAR',
   30: 'JAX',
-  31: '',
-  32: '',
   33: 'BAL',
   34: 'HOU'
+
 };
 
 const herokuAppURL = 'https://fantasy-football-server.herokuapp.com/';

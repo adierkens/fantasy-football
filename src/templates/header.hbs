@@ -1,0 +1,23 @@
+<div class="row team-header">
+    <div class="col-xs-4">
+        <img class="team-image" src="{{teamImage}}">
+    </div>
+    <div class="col-xs-4">
+        <H1 class="team-name"><b>{{teamName}}</b></H1>
+        <div class="row">
+            <b>Acquisitions:</b> {{acqusitions}}
+        </div>
+        <div class="row">
+            <b>Trades:</b> {{trades}}
+        </div>
+        <div class="row">
+            <a href="/ffl/tools/waiverorder?leagueId={{leagueId}}"> <b>Waiver Order:</b> {{waiver.order}} of {{waiver.total}} </a>
+        </div>
+    </div>
+    <div class="col-xs-4">
+        {{#record}}
+            <b>Overall</b> {{overall.wins}}-{{overall.losses}}
+            <b>Division</b> {{division.wins}}-{{division.losses}}
+        {{/record}}
+    </div>
+</div>

@@ -23,8 +23,8 @@ var getUrlParameter = function getUrlParameter(sParam) {
 var savedData = {};
 
 
-
 function init() {
+
     window.hash = window.hash || '#MyTeam';
 
     if (window.hash != "#MyTeam") {
@@ -64,6 +64,8 @@ function saveData() {
     savedData.teamImg = $('.games-univ-mod1 img')[0].src;
     savedData.teamName = $('.team-name').html().split('<')[0].trim();
 
+
+
     var count = 0;
     $('.games-btm-area li').each(function() {
         var text = $(this).text();
@@ -91,14 +93,19 @@ function saveData() {
     });
 }
 
-function populatePlayers(callback) {
+
+function populatePlayers(teamId, callback) {
 
     var roster = {
         players: [],
         bench: []
     };
 
-    $.get('http://games.espn.go.com/ffl/api/v2/rosterInfo?leagueId=' + leagueId + '&includeProjectionText=true&teamIds=' + getUrlParameter('teamId') + '&usePreviousSeasonRealStats=false&useCurrentSeasonRealStats=true&useCurrentPeriodRealStats=true&useCurrentPeriodProjectedStats=true&usePreviousPeriodRealStats=true&includeRankings=true&includeLatestNews=true',
+    var tempRoster = {};
+
+    var sent = 0;
+
+    $.get('http://games.espn.go.com/ffl/api/v2/rosterInfo?leagueId=' + leagueId + '&includeProjectionText=true&teamIds=' + teamId + '&usePreviousSeasonRealStats=false&useCurrentSeasonRealStats=true&useCurrentPeriodRealStats=true&useCurrentPeriodProjectedStats=true&usePreviousPeriodRealStats=true&includeRankings=true&includeLatestNews=true',
         function (data) {
             var players = data.leagueRosters.teams[0].slots;
 
@@ -113,8 +120,9 @@ function populatePlayers(callback) {
                 var player = {
                     firstName: p.firstName,
                     lastName: p.lastName,
-                    percentOwned: p.percentOwned,
-                    percentStarted: p.percentStarted,
+                    percentOwned: p.percentOwned.toFixed(2),
+                    percentStarted: p.percentStarted.toFixed(2),
+                    percentChange: p.percentChange.toFixed(2),
                     playerID: p.playerId,
                     positionRank: p.positionRank,
                     slot: slotMapping[slot],
@@ -126,6 +134,65 @@ function populatePlayers(callback) {
                         }
                     }
                 };
+
+                $.get('http://games.espn.go.com/ffl/api/v2/playerInfo?leagueId=' + leagueId + '&fromTeamId=' + teamId + '&playerId=' + p.playerId + '&useCurrentSeasonRealStats=true&useCurrentSeasonProjectedStats=true&usePreviousSeasonRealStats=false&useCurrentPeriodRealStats=true&useCurrentPeriodProjectedStats=true&usePreviousPeriodRealStats=true&useGameLog=true&includeProjectionText=true&include=gamesLog%7Cnews%7Cprojections%7CplayerInfos&',
+                    function(playerData) {
+                        var playerObj = playerData.playerInfo.players[0];
+
+                        var player = tempRoster[playerObj.player.playerId];
+
+                        var gameLog = playerObj.gameLog.games.reverse();
+                        var last3GameCount = Math.min(3, gameLog.length);
+                        var lastGamePoints = 0;
+                        var last3GameAvg = 0;
+
+                        for (var gameCount=0; gameCount<last3GameCount; gameCount++) {
+                            var gameStat = gameLog[gameCount];
+                            if (gameCount === 0) {
+                                lastGamePoints = gameStat.appliedStatTotal;
+                            }
+                            last3GameAvg += gameStat.appliedStatTotal;
+                        }
+
+                        player.lastGamePoints = lastGamePoints;
+                        player.last3GameAvg = (last3GameAvg/last3GameCount).toFixed(2);
+
+
+                        console.log(player);
+
+                        if (player.slot !== 'Bench') {
+                            roster.players.push(player);
+                        } else {
+                            roster.bench.push(player);
+                        }
+
+                        sent -= 1;
+                        if (sent === 0) {
+
+                            var playerSort = function(player) {
+                                var sortIndex = player.slot;
+                                if (player.slot == 'Bench') {
+                                    sortIndex = player.position;
+                                }
+                                return [
+                                    'QB',
+                                    'RB',
+                                    'WR',
+                                    'TE',
+                                    'FLEX',
+                                    'D/ST',
+                                    'K'
+                                ].indexOf(sortIndex);
+                            };
+
+                            roster.players = _.sortBy(roster.players, playerSort);
+                            roster.bench = _.sortBy(roster.bench, playerSort);
+
+                            return callback(roster);
+                        }
+                });
+
+                sent += 1;
 
                 if (player.slot === 'FLEX' || player.slot === 'Bench') {
                     for (var index=0; index< p.eligibleSlotCategoryIds.length; index++) {
@@ -139,7 +206,9 @@ function populatePlayers(callback) {
                     player.position = player.slot;
                 }
 
-
+                getNumberForPlayer(player.lastName, player.position, player.proTeam, function(number) {
+                   player.number = number;
+                });
 
                 if (p.projections) {
                     if (p.projections.length > 0) {
@@ -150,24 +219,23 @@ function populatePlayers(callback) {
                     }
                 }
 
-                if (slot < 9) {
-                    roster.players.push(player);
-                } else {
-                    roster.bench.push(player);
-                }
+                tempRoster[p.playerId] = player;
+
 
             }
 
-            return callback(roster);
         });
 }
 
+var context = {};
+
 window.onload = function() {
     saveData();
+    initHelpers();
 
-    populatePlayers(function(roster) {
+    populatePlayers(getUrlParameter('teamId'), function(roster) {
         console.log(roster);
-        document.body.innerHTML = loadTemplate('wrapper', {
+        context = {
             teamImage: savedData.teamImg,
             teamName: savedData.teamName,
             leagueId: leagueId,
@@ -185,7 +253,8 @@ window.onload = function() {
                     losses: 0
                 }
             }
-        });
+        };
+        document.body.innerHTML = loadTemplate('wrapper', context);
         init();
     });
 };
