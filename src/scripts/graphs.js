@@ -1,46 +1,4 @@
 
-const stats = {
-    points: 'Points',
-    pass_completions: 'Pass Completions',
-    pass_touchdowns: 'Pass Touchdowns',
-    interceptions: 'Interceptions',
-    rush_yards: 'Rushing Yards',
-    rush_touchdowns: 'Rushing Touchdowns',
-    receptions: 'Receptions',
-    reception_touchdowns: 'Receiving Touchdowns',
-    reception_yards: 'Receiving Yards',
-    touchdowns: 'Touchdowns'
-};
-
-const statsPerPosition = {
-    'QB': [
-        stats.points,
-        stats.pass_completions,
-        stats.pass_touchdowns,
-        stats.interceptions
-    ],
-    'RB': [
-        stats.points,
-        stats.rush_yards,
-        stats.rush_touchdowns,
-        stats.receptions,
-        stats.reception_touchdowns
-    ],
-    'WR': [
-        stats.points,
-        stats.receptions,
-        stats.reception_touchdowns,
-        stats.reception_yards
-    ],
-    'TE': [
-        stats.points,
-        stats.receptions,
-        stats.reception_touchdowns,
-        stats.reception_yards
-    ],
-    'K': []
-};
-
 var graphData = {
     data: {
         labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7", "Week 8", "Week 9", "Week 10", "Week 11", "Week 12", "Week 13", "Week 14", "Week 15"],
@@ -56,13 +14,9 @@ var graphData = {
                 data: [0]
             }
         ]
-    }
+    },
+    selectedPosition: 'QB'
 };
-
-function teamSelected() {
-
-}
-
 
 var playerTeamSelectData = _.map(Object.values(teamAliasMapping), function(obj) {
    return {
@@ -71,28 +25,85 @@ var playerTeamSelectData = _.map(Object.values(teamAliasMapping), function(obj) 
    }
 });
 
+function getSelectionDataForPosition(position) {
+    var positionStatOptions = statsPerPosition[position];
+    var rtnData = [];
+
+    for (var i=0; i<positionStatOptions.length; i++) {
+        var stObj = positionStatOptions[i];
+        rtnData.push({
+            id: i,
+            text: stObj.label
+        });
+    }
+
+    return rtnData;
+}
+
 function initGraph() {
 
     $('#player-type-selection').children().children().on('click', function() {
         $(this).parent().parent().children().removeClass('active');
         $(this).parent().addClass('active');
-        positionSelectionChanged($(this).text());
+        graphData.selectedPosition = $(this).text();
+
+        var statSelection = $('#player-type-stat-select');
+        statSelection.empty();
+        statSelection.append('<option></option>');
+
+        statSelection.select2({
+            disabled: false,
+            placeholder: 'Select a Stat to Graph',
+            data: getSelectionDataForPosition(graphData.selectedPosition)
+        });
+
     });
 
-    $('#ifr').ready(function(){
-        console.log(this);
+    $('#player-type-stat-select').select2({
+        placeholder: 'Select a Stat to Graph',
+        data: getSelectionDataForPosition('QB')
+    }).on('change', function() {
+        $('#player-type-team-select').select2({
+            disabled: false
+        });
     });
-
 
     $('#player-type-team-select').select2({
-        disabled: false,
+        disabled: true,
         placeholder: 'All Teams',
         data: playerTeamSelectData
+    }).on('change', function() {
+        var selectedTeamId = $(this).val();
+        var selectedTeam = proTeamIdMap[selectedTeamId];
+        console.log('Selected team ' + selectedTeam);
+
+        getPlayersForTeam({
+            team: selectedTeam,
+            position: graphData.selectedPosition
+        }, function(players) {
+
+            var playerSelection = $('#player-type-player-select');
+            playerSelection.empty();
+            playerSelection.append('<option></option>');
+
+            playerSelection.select2({
+                disabled: false,
+                placeholder: 'All Players',
+                data: _.map(players, function(player) {
+                    return {
+                        id: player.number,
+                        text: player.firstName + " " + player.lastName + " - #" + player.number
+                    };
+                })
+            });
+        });
     });
 
     $('#player-type-player-select').select2({
         disabled: true,
         placeholder: 'Select Player'
+    }).on('change', function() {
+
     });
 
     var ctx = document.getElementById("testChart").getContext("2d");
@@ -101,63 +112,38 @@ function initGraph() {
     });
 }
 
-function positionSelectionChanged(newPosition) {
-    console.log(newPosition);
-}
+function addToGraph() {
 
+    // create the filter
 
-function redrawGraph() {
-    graphData.chart.update();
-}
+    var statFilter = {
+        player: {
+            position: graphData.selectedPosition
+        }
+    };
 
+    var playerSelect = $('#player-type-player-select');
+    var teamSelect = $('#player-type-team-select');
 
-function nameFromPlayerFilter(filter, callback) {
+    if (teamSelect.val()) {
+        var selectedTeamId = teamSelect.val();
+        var selectedTeam = proTeamIdMap[selectedTeamId];
+        statFilter.player.team = selectedTeam;
 
-    // Stats are for a specific person
-    if (filter._id || filter.playerNumber) {
-        getNameForPlayer(filter, callback);
-        return;
+        if (playerSelect.val()) {
+            var selectedPlayerNumber = playerSelect.val();
+            var selectedPlayer = selectedTeam + selectedPlayerNumber;
+            statFilter.player._id = selectedPlayer;
+        }
     }
 
-    var name = "All players";
+    statFiler.fields = statsPerPosition[graphData.selectedPosition][$('#player-type-stat-select').val()]
 
-    if (filter.position) {
-        name = filter.position;
-    }
+    getStatsForFilter(statFilter, function(weeks) {
+        console.log(weeks);
 
-    name += " on ";
 
-    if (filter.team) {
-        name += filter.team;
-    } else {
-        name += " all teams";
-    }
-
-    callback(name);
-
-}
-
-function getStatsData(filter, callback) {
-
-    $.ajax(herokuAppURL + 'player', {
-        contentType: 'application/json',
-        success: function(data) {
-            if (data.status === 'success') {
-                console.log(data.data);
-                callback(data.data);
-            }
-        },
-        dataType: 'json',
-        method: 'POST',
-        data: JSON.stringify({ filter: filter })
-    });
-}
-
-function addDataToGraph(graphObj) {
-
-    getStatsData(graphObj.filter, function(weeklyStats) {
 
 
     });
-
 }

@@ -158,8 +158,6 @@ function populatePlayers(teamId, callback) {
                         player.last3GameAvg = (last3GameAvg/last3GameCount).toFixed(2);
 
 
-                        console.log(player);
-
                         if (player.slot !== 'Bench') {
                             roster.players.push(player);
                         } else {

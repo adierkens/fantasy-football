@@ -185,3 +185,91 @@ const proTeamIdMap = {
 };
 
 const herokuAppURL = 'https://fantasy-football-server.herokuapp.com/';
+
+const stats = {
+  points: {
+    label: 'Points',
+    fields: ['points']
+  },
+  pass_completions: {
+    label: 'Passing Completions',
+    fields: ['passing_completions']
+  },
+  pass_touchdowns: {
+    label: 'Passing Touchdowns',
+    fields: ['passing_touchdowns']
+  },
+  interceptions: {
+    label: 'Interceptions',
+    fields: ['passing_interceptions']
+  },
+  rush_yards: {
+    label: 'Rushing Yards',
+    fields: ['rushing_yards']
+  },
+  rush_touchdowns: {
+    label: 'Rushing Touchdowns',
+    fields: ['rushing_touchdowns']
+  },
+  receptions: {
+    label: 'Receptions',
+    fields: [
+      'receptions'
+    ]
+  },
+  reception_touchdowns: {
+    label: 'Receiving Touchdowns',
+    fields: [
+      'receiving_tds'
+    ]
+  },
+  reception_yards: {
+    label: 'Receiving Yards',
+    fields: [
+      'receiving_yards'
+    ]
+  },
+  total_touchdowns: {
+    label: 'Touchdowns',
+    fields: [
+      'receiving_tds',
+      'rushing_touchdowns'
+    ]
+  },
+  total_yards: {
+    label: 'Total Yards',
+    fields: [
+      'rushing_yards',
+      'receiving_yards'
+    ]
+  }
+};
+
+const statsPerPosition = {
+  'QB': [
+    stats.points,
+    stats.pass_completions,
+    stats.pass_touchdowns,
+    stats.interceptions
+  ],
+  'RB': [
+    stats.points,
+    stats.rush_yards,
+    stats.rush_touchdowns,
+    stats.receptions,
+    stats.reception_touchdowns
+  ],
+  'WR': [
+    stats.points,
+    stats.receptions,
+    stats.reception_touchdowns,
+    stats.reception_yards
+  ],
+  'TE': [
+    stats.points,
+    stats.receptions,
+    stats.reception_touchdowns,
+    stats.reception_yards
+  ],
+  'K': []
+};
