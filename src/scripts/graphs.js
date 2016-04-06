@@ -59,6 +59,18 @@ var graphData = {
     }
 };
 
+function teamSelected() {
+
+}
+
+
+var playerTeamSelectData = _.map(Object.values(teamAliasMapping), function(obj) {
+   return {
+       id: parseInt(obj.id, 10),
+       text: obj.alias
+   }
+});
+
 function initGraph() {
 
     $('#player-type-selection').children().children().on('click', function() {
@@ -71,9 +83,11 @@ function initGraph() {
         console.log(this);
     });
 
+
     $('#player-type-team-select').select2({
-        disabled: true,
-        placeholder: 'Select Team'
+        disabled: false,
+        placeholder: 'All Teams',
+        data: playerTeamSelectData
     });
 
     $('#player-type-player-select').select2({
