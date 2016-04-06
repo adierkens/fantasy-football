@@ -4,6 +4,7 @@ const LOCATIONS = {
     js: [
         chrome.extension.getURL('/dist/handlebars-latest.js'),
         'https://code.jquery.com/jquery-2.1.4.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.full.min.js',
         'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js',
         'https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.1.3/mustache.min.js',
         'http://fezvrasta.github.io/bootstrap-material-design/dist/js/material.js',

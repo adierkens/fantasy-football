@@ -73,14 +73,13 @@ function initGraph() {
 
     $('#player-type-team-select').select2({
         disabled: true,
-        placeholder: 'Select Player'
+        placeholder: 'Select Team'
     });
 
     $('#player-type-player-select').select2({
         disabled: true,
         placeholder: 'Select Player'
     });
-
 
     var ctx = document.getElementById("testChart").getContext("2d");
     graphData.chart = new Chart(ctx).Line(graphData.data, {
