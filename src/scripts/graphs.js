@@ -1,19 +1,17 @@
 
 var graphData = {
     data: {
-        labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7", "Week 8", "Week 9", "Week 10"],
+        labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7", "Week 8", "Week 9", "Week 10", "Week 11", "Week 12", "Week 13"],
         datasets: [
-            {
-                label: "Temp",
-                fillColor: "rgba(220,220,220,0.2)",
-                strokeColor: "rgba(220,220,220,1)",
-                pointColor: "rgba(220,220,220,1)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(220,220,220,1)",
-                data: [0]
-            }
-        ]
+
+        ],
+        legendTemplate : '<table>'
+        +'<% for (var i=0; i<datasets.length; i++) { %>'
+        +'<tr><td><div class=\"boxx\" style=\"background-color:<%=datasets[i].fillColor %>\"></div></td>'
+        +'<% if (datasets[i].label) { %><td><%= datasets[i].label %></td><% } %></tr><tr height="5"></tr>'
+        +'<% } %>'
+        +'</table>',
+        multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>"
     },
     selectedPosition: 'QB'
 };
@@ -120,11 +118,25 @@ function initGraph() {
     });
 
     graphData.ctx = document.getElementById("testChart").getContext("2d");
-    graphData.chart = new Chart(graphData.ctx).Line(graphData.data, {
-        responsive: true
+    graphData.chart = new Chart(graphData.ctx).Line({
+        labels: graphData.data.labels,
+        data: [
+            {
+                label: "Temp",
+                fillColor: "rgba(220,220,220,0.2)",
+                strokeColor: "rgba(220,220,220,1)",
+                pointColor: "rgba(220,220,220,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(220,220,220,1)",
+                data: [0]
+            }
+        ]
+    }, {
+        responsive: false
     });
     graphData.chart.datasets.pop();
-    graphData.update();
+    graphData.chart.update();
 }
 
 function getTitleForStatFilter(filter) {
@@ -148,18 +160,14 @@ function getTitleForStatFilter(filter) {
     return rtnStr;
 }
 
-
 function addDataSetToGraph(dataSet) {
-    dataSets = graphData.chart.datasets;
-    dataSets.push(dataSet);
-
-    graphData.chart.destroy();
-
-    graphData.data.datasets = dataSets;
+    dataSets = graphData.data.datasets.push(dataSet);
 
     graphData.chart = new Chart(graphData.ctx).Line(graphData.data, {
-        responsive: true
+        responsive: false
     });
+
+    document.getElementById("legendDiv").innerHTML = graphData.chart.generateLegend();
 }
 
 function getRandomGraphColors() {
