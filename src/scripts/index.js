@@ -227,6 +227,7 @@ function populatePlayers(teamId, callback) {
 
 var context = {};
 
+
 window.onload = function() {
     saveData();
     initHelpers();
