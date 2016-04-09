@@ -29,14 +29,14 @@
                             <div class="row-content">
                                 <div class="list-group-item-heading"><b>Roster</b></div>
                                 <p class="list-group-item-text">
-                                    <div class="row">
-                                        <div class="col-xs-5"></div>
-                                        <div class="col-xs-1"><b>Last Game</b></div>
-                                        <div class="col-xs-1"><b>3 Game Avg</b></div>
-                                        <div class="col-xs-1"><b>% Owned</b></div>
-                                        <div class="col-xs-1"><b>% Started</b></div>
-                                        <div class="col-xs-1"><b>% Change</b></div>
-                                    </div>
+                                <div class="row">
+                                    <div class="col-xs-5"></div>
+                                    <div class="col-xs-1"><b>Last Game</b></div>
+                                    <div class="col-xs-1"><b>3 Game Avg</b></div>
+                                    <div class="col-xs-1"><b>% Owned</b></div>
+                                    <div class="col-xs-1"><b>% Started</b></div>
+                                    <div class="col-xs-1"><b>% Change</b></div>
+                                </div>
                                 </p>
                             </div>
                         </div>
@@ -52,14 +52,14 @@
                                         <b>{{slot}}</b> - {{firstName}} {{lastName}} <span class="list-group-item-subheading"> - ({{position}}) - {{proTeam}} </span>
                                     </div>
                                     <p class="list-group-item-text">
-                                        <div class="row">
-                                            <div class="col-xs-5"></div>
-                                            <div class="col-xs-1">{{lastGamePoints}}</div>
-                                            <div class="col-xs-1">{{last3GameAvg}}</div>
-                                            <div class="col-xs-1">{{percentOwned}} % </div>
-                                            <div class="col-xs-1">{{percentStarted}} %</div>
-                                            <div class="col-xs-1">{{percentChange}} %</div>
-                                        </div>
+                                    <div class="row">
+                                        <div class="col-xs-5"></div>
+                                        <div class="col-xs-1">{{lastGamePoints}}</div>
+                                        <div class="col-xs-1">{{last3GameAvg}}</div>
+                                        <div class="col-xs-1">{{percentOwned}} % </div>
+                                        <div class="col-xs-1">{{percentStarted}} %</div>
+                                        <div class="col-xs-1">{{percentChange}} %</div>
+                                    </div>
                                     </p>
                                 </div>
                             </div>
@@ -85,14 +85,14 @@
                             <div class="row-content">
                                 <div class="list-group-item-heading"><b>Bench</b></div>
                                 <p class="list-group-item-text">
-                                    <div class="row">
-                                        <div class="col-xs-5"></div>
-                                        <div class="col-xs-1"><b>Last Game</b></div>
-                                        <div class="col-xs-1"><b>3 Game Avg</b></div>
-                                        <div class="col-xs-1"><b>% Owned</b></div>
-                                        <div class="col-xs-1"><b>% Started</b></div>
-                                        <div class="col-xs-1"><b>% Change</b></div>
-                                    </div>
+                                <div class="row">
+                                    <div class="col-xs-5"></div>
+                                    <div class="col-xs-1"><b>Last Game</b></div>
+                                    <div class="col-xs-1"><b>3 Game Avg</b></div>
+                                    <div class="col-xs-1"><b>% Owned</b></div>
+                                    <div class="col-xs-1"><b>% Started</b></div>
+                                    <div class="col-xs-1"><b>% Change</b></div>
+                                </div>
                                 </p>
                             </div>
                         </div>
@@ -106,14 +106,14 @@
                                 <div class="row-content">
                                     <div class="list-group-item-heading"><b>{{position}}</b> - {{firstName}} {{lastName}} <span class="list-group-item-subheading"> - {{proTeam}} </span> </div>
                                     <p class="list-group-item-text">
-                                        <div class="row">
-                                            <div class="col-xs-5"></div>
-                                            <div class="col-xs-1">{{lastGamePoints}}</div>
-                                            <div class="col-xs-1">{{last3GameAvg}}</div>
-                                            <div class="col-xs-1">{{percentOwned}} % </div>
-                                            <div class="col-xs-1">{{percentStarted}} %</div>
-                                            <div class="col-xs-1">{{percentChange}} %</div>
-                                        </div>
+                                    <div class="row">
+                                        <div class="col-xs-5"></div>
+                                        <div class="col-xs-1">{{lastGamePoints}}</div>
+                                        <div class="col-xs-1">{{last3GameAvg}}</div>
+                                        <div class="col-xs-1">{{percentOwned}} % </div>
+                                        <div class="col-xs-1">{{percentStarted}} %</div>
+                                        <div class="col-xs-1">{{percentChange}} %</div>
+                                    </div>
                                     </p>
                                 </div>
                             </div>
@@ -140,8 +140,8 @@
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.full.min.js"></script>
                 {{header}}
                 <div class="row">
-                    <div class="col-xs-1"></div>
-                    <div class="col-xs-10">
+                    <div class="col-xs-5">
+                        <label class="form-label" for="player-type-selection">Select a Position</label>
                         <ul class="nav nav-pills" id="player-type-selection">
                             <li class="graph-position active"><a href="javascript:void(0)">QB</a></li>
                             <li class="graph-position"><a href="javascript:void(0)">RB</a></li>
@@ -149,7 +149,6 @@
                             <li class="graph-position"><a href="javascript:void(0)">TE</a></li>
                             <li class="graph-position"><a href="javascript:void(0)">K</a></li>
                         </ul>
-
                         <div class="form-horizontal">
                             <div class="form-group">
                                 <div class="col-sm-10">
@@ -174,16 +173,42 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-xs-2"></div>
+                    <div class="col-xs-5">
+                        <div class="form-group">
+                            <select id="load-graph-select" class="form-control">
+                                <option></option>
+                            </select>
+                            <button type="button" class="btn btn-primary btn-raised" onclick="loadButtonClicked();">Load</button>
+                            <button type="button" class="btn btn-danger btn-raised" onclick="delButtonClicked();">Delete</button>
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
-                    <button class="btn btn-primary" onclick="addToGraph();">Add to Graph</button>
+                    <button class="btn btn-primary btn-raised" onclick="addToGraph();">Add to Graph</button>
                 </div>
                 <div class="row">
                     <div class="col-sm-7">
-                        <canvas id="testChart"></canvas>
+                        <div class="chart-wrapper">
+                            <canvas id="testChart"></canvas>
+                        </div>
                     </div>
                     <div class="col-sm-5">
                         <div id="legendDiv"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-raised btn-danger" id="clear-button" onclick="clearGraph();">Clear</button>
+                                    <button type="button" class="btn btn-primary btn-raised" onclick="saveButtonClicked();" >Save</button>
+                                    <input type="text" id="savedGraphName" class="form-control" placeholder="Untitled Graph">
+                                    <p id="saved-message">Saved!</p>
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

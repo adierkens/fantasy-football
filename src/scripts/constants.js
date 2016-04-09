@@ -185,6 +185,7 @@ const proTeamIdMap = {
 };
 
 const herokuAppURL = 'https://fantasy-football-server.herokuapp.com/';
+// const herokuAppURL = 'http://localhost:8088/';
 
 const stats = {
   points: {

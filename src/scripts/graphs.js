@@ -1,20 +1,16 @@
 
 var graphData = {
     data: {
-        labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7", "Week 8", "Week 9", "Week 10", "Week 11", "Week 12", "Week 13"],
-        datasets: [
-
-        ],
-        legendTemplate : '<table>'
-        +'<% for (var i=0; i<datasets.length; i++) { %>'
-        +'<tr><td><div class=\"boxx\" style=\"background-color:<%=datasets[i].fillColor %>\"></div></td>'
-        +'<% if (datasets[i].label) { %><td><%= datasets[i].label %></td><% } %></tr><tr height="5"></tr>'
-        +'<% } %>'
-        +'</table>',
+        labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7", "Week 8", "Week 9", "Week 10", "Week 11"],
+        datasets: [],
         multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>"
     },
-    selectedPosition: 'QB'
+    selectedPosition: 'QB',
+    savedGraphs: [],
+    statFilters: []
 };
+
+
 
 var playerIDToObjMap = {};
 
@@ -40,7 +36,53 @@ function getSelectionDataForPosition(position) {
     return rtnData;
 }
 
+function populateSelect() {
+
+    $('#load-graph-select').select2({
+        placeholder: 'Select a saved graph',
+        disabled: true
+    });
+
+    fetchSavedGraphs(function (savedGraphs) {
+        graphData.savedGraphs = savedGraphs;
+
+        console.log(savedGraphs);
+
+        _.each(savedGraphs, function(savedGraph) {
+           _.each(savedGraph.statFilters, function(filter) {
+               var player = filter.player;
+               if (player._id && !playerIDToObjMap[player._id]) {
+                   getPlayersForTeam({
+                       _id: player._id
+                   }, function(data) {
+                       var player = data[0];
+                        playerIDToObjMap[player._id] = player;
+                   });
+               }
+           });
+        });
+
+        var loadGraphSelect = $('#load-graph-select');
+
+        var data = _.map(graphData.savedGraphs, function(savedGraph) {
+            return {
+                id: graphData.savedGraphs.indexOf(savedGraph),
+                text: savedGraph._id
+            }
+        });
+
+        loadGraphSelect.empty();
+        loadGraphSelect.append('<option></option>');
+        loadGraphSelect.select2({
+            placeholder: 'Select a saved graph',
+            disabled: false,
+            data: data
+        });
+    });
+}
+
 function initGraph() {
+    populateSelect();
 
     $('#player-type-selection').children().children().on('click', function() {
         $(this).parent().parent().children().removeClass('active');
@@ -112,7 +154,7 @@ function initGraph() {
     $('#player-type-player-select').select2({
         disabled: true,
         allowClear: true,
-        placeholder: 'Select Player'
+        placeholder: 'All Players'
     }).on('change', function() {
 
     });
@@ -160,6 +202,38 @@ function getTitleForStatFilter(filter) {
     return rtnStr;
 }
 
+function deleteDataSetFromGraph(index) {
+    graphData.data.datasets.splice(index, 1);
+    graphData.statFilters.splice(index, 1);
+    
+    if (graphData.data.datasets.length === 0) {
+        clearGraph();
+    } else {
+        graphData.chart = new Chart(graphData.ctx).Line(graphData.data, {
+            responsive: false
+        });
+        updateLegend();
+    }
+}
+
+function updateLegend() {
+    $('#legendDiv').empty();
+    legend(document.getElementById('legendDiv'), graphData.data);
+
+    $('.legend .title .glyphicon-remove').hide();
+
+    $('.legend .title').mouseenter(function() {
+        $(this).children('.glyphicon-remove').show().on('click', function(evt) {
+            evt.stopPropagation();
+            evt.preventDefault();
+            evt.stopImmediatePropagation();
+            deleteDataSetFromGraph($(this).parent().index());
+        });
+    }).mouseleave(function() {
+        $(this).children('.glyphicon-remove').hide();
+    });
+}
+
 function addDataSetToGraph(dataSet) {
     dataSets = graphData.data.datasets.push(dataSet);
 
@@ -167,16 +241,49 @@ function addDataSetToGraph(dataSet) {
         responsive: false
     });
 
-    document.getElementById("legendDiv").innerHTML = graphData.chart.generateLegend();
+    updateLegend();
+
 }
 
 function getRandomGraphColors() {
+    var randColor = randomColor();
     return {
-        strokeColor: "rgba(151,187,205,1)",
-        pointColor: randomColor(),
-        pointStrokeColor: randomColor(),
-        fillColor: "rgba(220,220,220,0.2)"
+        strokeColor: randColor,
+        pointColor: randColor,
+        pointStrokeColor: "black",
+        fillColor: "rgba(220,220,220,0.2)",
     }
+}
+
+
+function addStatFilterToGraph(statFilter) {
+    getStatsForFilter(statFilter, function(weeks) {
+        console.log(weeks);
+
+        // Turn this into the thing we're actually gonna graph
+
+        var weekData = [];
+
+        for (var week=1; week<16; week++) {
+
+            var statLabel = weeks.filter.fields.label;
+            var statObj = _.pick(weeks.weeks[week], weeks.filter.fields.fields);
+            var statSum = _.reduce(Object.values(statObj), function(sum, n) {
+                return sum + n;
+            }, 0);
+
+            weekData.push(statSum);
+        }
+
+        var dataSet = {
+            label: getTitleForStatFilter(weeks.filter),
+            data: weekData,
+            statFilter: statFilter
+        };
+
+        addDataSetToGraph(_.defaults(dataSet, getRandomGraphColors()));
+        graphData.statFilters.push(statFilter);
+    });
 }
 
 function addToGraph() {
@@ -204,32 +311,120 @@ function addToGraph() {
         }
     }
 
-    statFilter.fields = statsPerPosition[graphData.selectedPosition][$('#player-type-stat-select').val()]
+    statFilter.fields = statsPerPosition[graphData.selectedPosition][$('#player-type-stat-select').val()];
 
-    getStatsForFilter(statFilter, function(weeks) {
-        console.log(weeks);
+    addStatFilterToGraph(statFilter);
+}
 
-        // Turn this into the thing we're actually gonna graph
+function getClientID() {
+    return leagueId + '-' + teamId;
+}
 
-        var weekData = [];
+function fetchSavedGraphs(callback) {
 
-        for (var week=1; week<16; week++) {
+    var fetObj = {
+        operation: 'GET',
+        userID: getClientID()
+    };
 
-            var statLabel = weeks.filter.fields.label;
-            var statObj = _.pick(weeks.weeks[week], weeks.filter.fields.fields);
-            var statSum = _.reduce(Object.values(statObj), function(sum, n) {
-                return sum + n;
-            }, 0);
-
-            weekData.push(statSum);
-        }
-
-        var dataSet = {
-            label: getTitleForStatFilter(weeks.filter),
-            data: weekData
-        };
-
-        addDataSetToGraph(_.defaults(dataSet, getRandomGraphColors()));
-
+    $.ajax(herokuAppURL + 'userSave', {
+        contentType: 'application/json',
+        success: function(data) {
+            console.log(data);
+            if (data.status === 'success') {
+                callback(data.data);
+            }
+        },
+        dataType: 'json',
+        method: 'POST',
+        data: JSON.stringify(fetObj)
     });
+
+}
+
+function saveGraph(label) {
+    var clientID = getClientID();
+
+    var saveGameObj = {
+        operation: 'ADD',
+        savedGraph: {
+            userID: clientID,
+            _id: label,
+            statFilters: graphData.statFilters
+        }
+    };
+
+    $.ajax(herokuAppURL + 'userSave', {
+        contentType: 'application/json',
+        success: function() {
+            setTimeout(function() {
+                populateSelect();
+            }, 500);
+
+            $('#saved-message').show();
+            setTimeout(function() {
+                $('#saved-message').hide();
+            }, 1000);
+        },
+        dataType: 'json',
+        method: 'POST',
+        data: JSON.stringify(saveGameObj)
+    });
+
+    graphData.savedGraphs.push(saveGameObj.savedGraph);
+
+}
+
+function delGraph(graphID) {
+
+    var delGameObj = {
+        operation: 'DELETE',
+        savedGraphID: graphID
+    };
+
+    $.ajax(herokuAppURL + 'userSave', {
+        contentType: 'application/json',
+        success: function(data) {
+            console.log('Del callback');
+            populateSelect();
+        },
+        dataType: 'json',
+        method: 'POST',
+        data: JSON.stringify(delGameObj)
+    });
+
+}
+
+function getSelectedGraphLabel() {
+    var loadGraphSelect = $('#load-graph-select');
+    return graphData.savedGraphs[loadGraphSelect.val()]._id;
+}
+
+function saveButtonClicked() {
+    var saveGraphLabel = $('#savedGraphName');
+    saveGraph(saveGraphLabel.val());
+}
+
+function clearGraph() {
+    $('#legendDiv').empty();
+    $('.chart-wrapper').empty();
+    $('.chart-wrapper').append('<canvas id="testChart">');
+    graphData.ctx = document.getElementById('testChart').getContext('2d');
+    graphData.data.datasets = [];
+}
+
+function loadButtonClicked() {
+    var saveGraphLabel = $('#savedGraphName');
+    saveGraphLabel.val(getSelectedGraphLabel());
+    var loadGraphSelect = $('#load-graph-select');
+
+    var statFilters = graphData.savedGraphs[loadGraphSelect.val()].statFilters;
+    _.each(statFilters, function(statFilter) {
+        addStatFilterToGraph(statFilter);
+    });
+
+}
+
+function delButtonClicked() {
+    delGraph(getSelectedGraphLabel());
 }
