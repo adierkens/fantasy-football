@@ -417,7 +417,7 @@ function loadButtonClicked() {
     var saveGraphLabel = $('#savedGraphName');
     saveGraphLabel.val(getSelectedGraphLabel());
     var loadGraphSelect = $('#load-graph-select');
-
+    clearGraph();
     var statFilters = graphData.savedGraphs[loadGraphSelect.val()].statFilters;
     _.each(statFilters, function(statFilter) {
         addStatFilterToGraph(statFilter);
